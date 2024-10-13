@@ -2,7 +2,7 @@ name: ai_music
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 2.0.0+10
+version: 0.0.1+1
 
 environment:
   sdk: '>=3.3.4 <4.0.0'
@@ -13,7 +13,6 @@ dependencies:
     sdk: flutter
   random_x: ^0.3.1
   cupertino_icons: ^1.0.6
-  flutter_inappwebview: ^6.0.0
   get: ^4.6.6
   shared_preferences: ^2.2.3
   dart_jsonwebtoken: ^2.14.0
@@ -21,14 +20,37 @@ dependencies:
   dio: ^5.4.1
   text_area: ^0.0.3
   loading_indicator: ^3.1.1
+  device_info: ^2.0.3
+  flutter_inappwebview: 6.0.0
+  audio_session: ^0.1.21
+  just_audio: ^0.9.39
+  url_launcher: ^6.3.0
+  flutter_share: ^2.0.0
+  percent_indicator: ^4.0.1
+  flutter_downloader: ^1.11.8
+  permission_handler: ^11.3.1
+  gdpr_dialog: ^2.1.1
+  open_file_plus: ^3.4.1+1
+  flutter_native_splash:
+  infinite_scroll_pagination: ^4.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+dependency_overrides:
+  webview_flutter_android: 3.16.1
   flutter_lints: ^3.0.0
 flutter:
   uses-material-design: true
   assets:
     - assets/image/
     - assets/icons/
+flutter_native_splash:
+  color: "#121212"
+  image: assets/icons/icon.png
+  color_dark: "#121212"
+  image_dark: assets/icons/icon.png
+  android_12:
+    image: assets/icons/icon.png
+    color: "#121212"
+    icon_background_color: "#121212"

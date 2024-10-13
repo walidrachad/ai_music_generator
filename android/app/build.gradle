@@ -2,6 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services'
 }
 
 def localProperties = new Properties()
@@ -23,7 +24,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.suneai.aimusicmaker.sunosongsgenerator"
+    namespace "com.sunoaimusic.aisongs.suno_musicgenerator"
     compileSdk 34
     ndkVersion flutter.ndkVersion
 
@@ -40,16 +41,26 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
     defaultConfig {
-        applicationId "com.suneai.aimusicmaker.sunosongsgenerator"
+        applicationId "com.sunoaimusic.aisongs.suno_musicgenerator"
         minSdkVersion 21
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
+
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'Si'
+            keyPassword 'facille95'
+            storeFile file('key.jks')
+            storePassword 'facille95'
+        }
+    }
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
@@ -58,4 +69,10 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation 'androidx.webkit:webkit:1.8.0'
+    implementation "com.android.billingclient:billing:7.0.0"
+    implementation 'com.android.support:multidex:1.0.3'
+//    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+//    implementation("com.google.firebase:firebase-analytics")
+}

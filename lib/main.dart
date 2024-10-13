@@ -1,14 +1,37 @@
 import 'package:ai_music/app_routes.dart';
 import 'package:ai_music/bindings/auth_binding.dart';
+import 'package:ai_music/config/data.dart';
+import 'package:ai_music/services/api.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 
-void main() {
-  runApp(const App());
+
+void main() async {
+  Api api = Api();
+  WidgetsFlutterBinding.ensureInitialized();
+  await api.getSetting().then((value) async {
+    AppData.settingModule = value!;
+  });
+  await api.getAuthConfig().then((value) async {
+    AppData.authConfigs = value;
+  });
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
+  }
+  runApp(App(
+    initialRoute: AppData.settingModule.cookies.isEmpty
+        ? AppRoutes.onboarding
+        : AppRoutes.home,
+  ));
 }
 
 class App extends StatelessWidget {
-  const App({super.key});
+  const App({super.key, required this.initialRoute});
+
+  final String initialRoute;
+
   @override
   Widget build(BuildContext context) {
     return Listener(
@@ -21,7 +44,7 @@ class App extends StatelessWidget {
       child: GetMaterialApp(
         getPages: AppRoutes.pages,
         debugShowCheckedModeBanner: false,
-        initialRoute: AppRoutes.initialRoute,
+        initialRoute: initialRoute,
         initialBinding: AuthBinding(),
         title: 'ai_music',
       ),

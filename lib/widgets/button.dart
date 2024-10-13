@@ -19,14 +19,6 @@ class AppButton extends StatelessWidget {
         child: Container(
           alignment: Alignment.center,
           decoration: ShapeDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.5),
-              ],
-            ),
             shape: RoundedRectangleBorder(
               side: const BorderSide(width: 1, color: Colors.transparent),
               borderRadius: BorderRadius.circular(8),

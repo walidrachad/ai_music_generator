@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "317946533233",
+    "project_id": "suno-cbc4c",
+    "storage_bucket": "suno-cbc4c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:317946533233:android:54379316b0ccacc3ab52d0",
+        "android_client_info": {
+          "package_name": "com.sunoaimusic.aisongs.suno_musicgenerator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoy94Oy1uPHpzGL7UjWYNrVSxKPL7PCEw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
