@@ -10,6 +10,10 @@ class LocalStorageService extends GetxService {
     return this;
   }
 
+  Future<void> clean() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.clear();
+  }
   Future<void> setCookies(String token) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setString(TOKEN_KEY, token);
@@ -38,5 +42,15 @@ class LocalStorageService extends GetxService {
   Future<bool?> getIsFirst() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool(IS_FIRST);
+  }
+
+  saveCoins(int value, String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(key, value);
+  }
+
+  Future<int?> getCoins(String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(key);
   }
 }

@@ -1,14 +1,23 @@
+import 'package:ai_music/config/contant.dart';
 import 'package:ai_music/config/extensions/color.dart';
+import 'package:ai_music/config/theme/app_decoration.dart';
 import 'package:ai_music/config/theme/colors.dart';
 import 'package:ai_music/config/theme/text_style.dart';
 import 'package:ai_music/controllers/home_controller.dart';
 import 'package:ai_music/modules/song_module.dart';
 import 'package:ai_music/widgets/button.dart';
+import 'package:ai_music/widgets/custom_publication.dart';
+import 'package:ai_music/widgets/detail_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class MySongs extends StatelessWidget {
   const MySongs({super.key, required this.controller});
+
   final HomeController controller;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,13 +32,13 @@ class MySongs extends StatelessWidget {
           SizedBox(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: _buildList(context)),
+              child: _buildBody(context)),
         ],
       ),
     );
   }
 
-  Widget _buildList(BuildContext context) {
+  Widget _buildBody(BuildContext context) {
     return Column(
       children: [
         SizedBox(
@@ -52,96 +61,48 @@ class MySongs extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 alignment: Alignment.center,
-                decoration: ShapeDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withOpacity(0.5),
-                      AppColors.background,
-                    ],
-                  ),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
-                    ),
-                  ),
-                ),
+                decoration: masterDecoration,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0.0, right: 0),
                   child: Column(
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 16, bottom: 16, left: 16, right: 16),
+                            top: 36, bottom: 0, left: 16.0, right: 16),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            InkWell(
-                              onTap: () {
-                                controller.changeOption(NavBarOption.trending);
-                              },
-                              child: Container(
-                                height: 26,
-                                width: 26,
-                                decoration: const BoxDecoration(
-                                    image: DecorationImage(
-                                        image: AssetImage(
-                                            "assets/icons/arrow_right.png"),
-                                        fit: BoxFit.fill)),
-                              ),
-                            ),
                             Text(
-                              "My Songs",
+                              MY_SONGS,
                               style: AppTextStyle.labelStyle.copyWith(
-                                  fontWeight: FontWeight.normal, fontSize: 20),
+                                  fontWeight: FontWeight.bold, fontSize: 25),
                             ),
-                            const SizedBox(
-                              height: 26,
-                              width: 26,
-                            )
                           ],
                         ),
                       ),
                       Expanded(
-                          child: SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 16, right: 16),
-                          child: Column(
-                            children: [
-                              ...controller.mySongs
-                                  .map((e) => _buildItem(context, e)),
-                            ],
-                          ),
-                        ),
-                      )),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16.0, bottom: 16),
-                        child: SizedBox(
-                            height: 38,
-                            width: 253,
-                            child: InkWell(
-                                onTap: () {
-                                  controller
-                                      .changeOption(NavBarOption.generate);
-                                },
-                                child:
-                                    const AppButton(label: "Generate Song"))),
-                      ),
-                      Container(
-                        color: Colors.black,
-                        child: Container(
-                          height: 100,
-                          decoration: ShapeDecoration(
-                            color: AppColors.primary,
-                            shape: RoundedRectangleBorder(
-                              side: const BorderSide(
-                                  width: 1, color: Colors.transparent),
-                              borderRadius: BorderRadius.circular(8),
+                          child: RefreshIndicator(
+                            onRefresh: () async =>
+                                controller.pagingController.refresh(),
+                            child: PagedListView<int, SongModule>.separated(
+                              pagingController: controller.pagingController,
+                              builderDelegate: PagedChildBuilderDelegate(
+                                animateTransitions: true,
+                                itemBuilder: (context, item, index) =>
+                                    _buildItem(context, item),
+                              ),
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(),
                             ),
                           ),
                         ),
+                      ),
+                      CustomPublication(
+                        homeController: controller,
+                      ),
+                      const SizedBox(
+                        height: 96,
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).padding.bottom,
@@ -159,81 +120,105 @@ class MySongs extends StatelessWidget {
 
   Widget _buildItem(BuildContext context, SongModule song) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Card(
+        color: AppColors.primary,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                height: 56,
-                width: 56,
-                decoration: ShapeDecoration(
-                  image: song.image != null
-                      ? DecorationImage(
-                          image: NetworkImage(song.image!),
-                        )
-                      : const DecorationImage(
-                          fit: BoxFit.fill,
-                          image: AssetImage("assets/image/background.png"),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () => controller.loadAudio(song),
+                    child: Container(
+                      height: 56,
+                      width: 56,
+                      decoration: ShapeDecoration(
+                        image: song.image != null
+                            ? DecorationImage(
+                                image: NetworkImage(song.image!),
+                              )
+                            : const DecorationImage(
+                                fit: BoxFit.fill,
+                                image: AssetImage("assets/image/background.png"),
+                              ),
+                        shape: RoundedRectangleBorder(
+                          side:
+                              const BorderSide(width: 1, color: Colors.transparent),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(width: 1, color: Colors.transparent),
-                    borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
-                ),
+                  InkWell(
+                    onTap: () => controller.loadAudio(song),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16, top: 8),
+                      child: (song.description != null)
+                          ? Text(
+                              "${song.description!.substring(0, 10)} ...",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyle.labelStyle.copyWith(
+                                  fontSize: 13, fontWeight: FontWeight.normal),
+                            )
+                          : const SizedBox(),
+                    ),
+                  )
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, top: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width -
-                          (64 + 16 + 56 + 18),
-                      child: Text(
-                        song.title ?? "--",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyle.labelStyle.copyWith(
-                            fontSize: 13, fontWeight: FontWeight.normal),
+              Row(
+                children: [
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  InkWell(
+                    onTap: () => showDetail(context, song),
+                    child: Container(
+                      height: 18,
+                      width: 18,
+                      decoration: ShapeDecoration(
+                        color: HexColor("#939394"),
+                        image: const DecorationImage(
+                          image: AssetImage("assets/icons/more.png"),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          side:
+                              const BorderSide(width: 1, color: Colors.transparent),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width -
-                          (64 + 16 + 56 + 18),
-                      child: Text(
-                        song.description ?? "--",
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyle.labelStyle.copyWith(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
-                            color: HexColor("#FFFFFF")),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               )
             ],
           ),
-          Container(
-            height: 18,
-            width: 18,
-            decoration: ShapeDecoration(
-              color: HexColor("#939394"),
-              image: const DecorationImage(
-                image: AssetImage("assets/icons/more.png"),
-              ),
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 1, color: Colors.transparent),
-                borderRadius: BorderRadius.circular(999),
-              ),
-            ),
-          )
-        ],
+        ),
+      ),
+    );
+  }
+
+  showDetail(BuildContext context, SongModule song) {
+    Get.bottomSheet(
+      DetailDialog(
+        song: song,
+      ),
+      enterBottomSheetDuration: 300.milliseconds,
+      exitBottomSheetDuration: 300.milliseconds,
+      backgroundColor: Colors.transparent,
+      elevation: 1,
+      isDismissible: true,
+      ignoreSafeArea: false,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
       ),
     );
   }

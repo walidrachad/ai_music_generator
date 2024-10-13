@@ -1,14 +1,16 @@
-import 'package:ai_music/config/extensions/color.dart';
+import 'package:ai_music/config/data.dart';
+import 'package:ai_music/config/theme/app_decoration.dart';
 import 'package:ai_music/config/theme/colors.dart';
 import 'package:ai_music/config/theme/text_style.dart';
 import 'package:ai_music/controllers/home_controller.dart';
-import 'package:ai_music/modules/song_module.dart';
-import 'package:ai_music/widgets/button.dart';
+import 'package:ai_music/widgets/custom_publication.dart';
 import 'package:flutter/material.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key, required this.controller});
+
   final HomeController controller;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,78 +23,178 @@ class SettingScreen extends StatelessWidget {
       child: Stack(
         children: [
           SizedBox(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: _buildList(context)),
-          _buildTitle(context),
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: _buildBody(context),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildList(BuildContext context) {
+  Widget _buildBody(BuildContext context) {
     return Column(
       children: [
         SizedBox(
-          height: MediaQuery.of(context).padding.top + 100,
+          height: MediaQuery.of(context).padding.top + 80,
         ),
         Expanded(
-          child: SingleChildScrollView(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    AppColors.background,
-                  ],
-                ),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  AppColors.background,
+                ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  decoration: ShapeDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withOpacity(0.5),
-                        AppColors.background,
-                      ],
-                    ),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: Container(
+                width: double.infinity,
+                alignment: Alignment.center,
+                decoration: masterDecoration,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 0.0, right: 0),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 36, bottom: 16, left: 16.0, right: 16),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Settings",
+                              style: AppTextStyle.labelStyle.copyWith(
+                                  fontWeight: FontWeight.bold, fontSize: 25),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 16),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 36, bottom: 16),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Setting",
-                                style: AppTextStyle.labelStyle.copyWith(
-                                    fontWeight: FontWeight.bold, fontSize: 25),
-                              ),
-                            ],
+                      Container(
+                        width: MediaQuery.of(context).size.width - 64,
+                        decoration: ShapeDecoration(
+                          color: Colors.white.withOpacity(0.3),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                              bottomLeft: Radius.circular(12),
+                              bottomRight: Radius.circular(12),
+                            ),
                           ),
                         ),
-                        ...controller.trending
-                            .map((e) => _buildItem(context, e)),
-                        const SizedBox(
-                          height: 96,
-                        )
-                      ],
-                    ),
+                        child: Column(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                controller.launchInBrowser(
+                                    AppData.settingModule.contact);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 8.0, left: 12, bottom: 8),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 22,
+                                      width: 22,
+                                      child: Image.asset(
+                                          "assets/icons/contact.png"),
+                                    ),
+                                    const SizedBox(
+                                      width: 12,
+                                    ),
+                                    Text(
+                                      "Contact us",
+                                      style: AppTextStyle.labelStyle.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Divider(
+                              thickness: 1,
+                              color: Colors.white.withOpacity(0.3),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                controller.shareApp();
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 8.0, left: 12, bottom: 8),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 22,
+                                      width: 22,
+                                      child:
+                                          Image.asset("assets/icons/share.png"),
+                                    ),
+                                    const SizedBox(
+                                      width: 12,
+                                    ),
+                                    Text(
+                                      "Tell Friends",
+                                      style: AppTextStyle.labelStyle.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Divider(
+                              thickness: 1,
+                              color: Colors.white.withOpacity(0.3),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                controller.launchInBrowser(
+                                    AppData.settingModule.privacyPolicy);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 8.0, left: 12, bottom: 8),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 22,
+                                      width: 22,
+                                      child: Image.asset(
+                                          "assets/icons/privacy-policy.png"),
+                                    ),
+                                    const SizedBox(
+                                      width: 12,
+                                    ),
+                                    Text(
+                                      "Privacy Policy",
+                                      style: AppTextStyle.labelStyle.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Expanded(
+                        child: SizedBox(),
+                      ),
+                      CustomPublication(
+                        homeController: controller,
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).padding.bottom,
+                      )
+                    ],
                   ),
                 ),
               ),
@@ -100,153 +202,6 @@ class SettingScreen extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildTitle(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 80,
-      ),
-      child: Column(
-        children: [
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(),
-              SizedBox(
-                  height: 38, width: 253, child: AppButton(label: "Setting")),
-              SizedBox(),
-            ],
-          ),
-          const Spacer(),
-          _buildNavBar(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavBar(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 80 + MediaQuery.of(context).padding.bottom,
-      decoration: ShapeDecoration(
-        color: AppColors.primary,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(36),
-            topRight: Radius.circular(36),
-          ),
-        ),
-      ),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16, top: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                children: [
-                  Image.asset(
-                    width: 40,
-                    height: 40,
-                    "assets/icons/home.png",
-                  ),
-                  Text(
-                    "Home",
-                    style: AppTextStyle.labelStyle.copyWith(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  Image.asset(
-                    width: 40,
-                    height: 40,
-                    "assets/icons/add.png",
-                  ),
-                  Text(
-                    "Create",
-                    style: AppTextStyle.labelStyle.copyWith(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 10,
-                    ),
-                  )
-                ],
-              ),
-              Column(
-                children: [
-                  Image.asset(
-                    width: 40,
-                    height: 40,
-                    "assets/icons/songs.png",
-                  ),
-                  Text(
-                    "My Songs",
-                    style: AppTextStyle.labelStyle.copyWith(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 10,
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildItem(BuildContext context, SongModule song) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 56,
-            width: 56,
-            decoration: ShapeDecoration(
-              image: DecorationImage(
-                image: NetworkImage(song.image!),
-              ),
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 1, color: Colors.transparent),
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, top: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  song.title ?? "--",
-                  style: AppTextStyle.labelStyle
-                      .copyWith(fontSize: 13, fontWeight: FontWeight.normal),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - (64 + 16 + 56),
-                  child: Text(
-                    song.description ?? "--",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTextStyle.labelStyle.copyWith(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w400,
-                        color: HexColor("#FFFFFF")),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
     );
   }
 }
