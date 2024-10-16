@@ -33,7 +33,10 @@ dependencies:
   open_file_plus: ^3.4.1+1
   flutter_native_splash:
   infinite_scroll_pagination: ^4.0.0
-
+  lordicon:
+    git:
+      url: https://github.com/yassineelhoubi/lordicon-flutter.git
+      ref: feature/fix_issue_with_updating_icon_color_width__height
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -45,6 +48,7 @@ flutter:
   assets:
     - assets/image/
     - assets/icons/
+    - assets/animation/
 flutter_native_splash:
   color: "#121212"
   image: assets/icons/icon.png

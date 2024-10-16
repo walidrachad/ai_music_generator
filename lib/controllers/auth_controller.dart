@@ -41,19 +41,19 @@ class AuthController extends GetxController {
         }
       }
     }
-    bool isLogin =await concatValues(authConfigs);
-    if(isLogin){
-      Get.toNamed(AppRoutes.home);
+    bool isLogin = await concatValues(authConfigs);
+    if (isLogin) {
+      Get.offNamed(AppRoutes.home);
     }
   }
 
-  Future<bool> concatValues(List<AuthConfig> authConfigList) async{
+  Future<bool> concatValues(List<AuthConfig> authConfigList) async {
     List<AuthCookies> allCookies = [];
     for (var authConfig in authConfigList) {
       allCookies.addAll(authConfig.cookies);
     }
     bool isLogin = hasEmptyValue(allCookies);
-    if(isLogin){
+    if (isLogin) {
       allCookies.sort((a, b) => a.index.compareTo(b.index));
       await store.setCookies(allCookies.map((cookie) => cookie.value).join());
     }
@@ -77,5 +77,11 @@ class AuthController extends GetxController {
   void setIsLoading() {
     isLoading = true;
     update();
+  }
+
+  @override
+  void dispose() {
+    webViewController?.dispose();
+    super.dispose();
   }
 }
