@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:ai_music/config/data.dart';
 import 'package:ai_music/modules/song_module.dart';
+import 'package:ai_music/screens/error/error_screen.dart';
 import 'package:ai_music/services/api.dart';
 import 'package:ai_music/services/local_storage.dart';
 import 'package:audio_session/audio_session.dart';
@@ -29,6 +30,7 @@ class HomeController extends GetxController {
   );
   bool isPlaying = false;
   final store = Get.find<LocalStorageService>();
+
   final Api _api = Api();
   List<SongModule> trending = [];
   List<String> styles = [];
@@ -58,17 +60,29 @@ class HomeController extends GetxController {
     if (AppData.settingModule.cookies.isNotEmpty) {
       cookie = AppData.settingModule.cookies;
     }
-    await _api.applyCookie(cookie ?? "", newSid ?? "");
-    // await _api.getSongMetadata().then((value) {
-    //   trending = value;
-    //   update();
-    // });
+    pagingController.addPageRequestListener(getMySongs);
+    try {
+      await _api.applyCookie(cookie ?? "", newSid ?? "");
+      await getSongMetadata();
+      await getStyles();
+      await getCoins();
+    } catch (e) {
+      Get.to(const ErrorScreen());
+    }
+  }
+
+  Future<void> getSongMetadata() async {
+    await _api.getSongMetadata().then((value) {
+      trending = value;
+      update();
+    });
+  }
+
+  Future<void> getStyles() async {
     await _api.getStyles().then((value) {
       styles = value;
       update();
     });
-    pagingController.addPageRequestListener(getMySongs);
-    await getCoins();
   }
 
   Future<void> getMySongs(int pageKey) async {
@@ -83,6 +97,7 @@ class HomeController extends GetxController {
         pagingController.appendPage(newItems, nextPageKey);
       }
     } catch (error) {
+      Get.to(const ErrorScreen());
       pagingController.error = error;
     }
   }
@@ -127,7 +142,10 @@ class HomeController extends GetxController {
         update();
         getCoins();
       });
+    }).onError((error, stackTrace) {
+      Get.to(const ErrorScreen());
     });
+    ;
   }
 
   selectStyle(String style) {
@@ -248,7 +266,10 @@ class HomeController extends GetxController {
     Directory? directory;
     directory = await getExternalStorageDirectory();
 
-    await _api.downloadFile(url);
+    await _api.downloadFile(url).onError((error, stackTrace) {
+      Get.to(const ErrorScreen());
+    });
+    ;
     await FlutterDownloader.enqueue(
         url: url,
         showNotification: false,

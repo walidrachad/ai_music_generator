@@ -1,3 +1,4 @@
+import 'package:ai_music/config/theme/app_spacing.dart';
 import 'package:ai_music/config/theme/colors.dart';
 import 'package:ai_music/config/theme/text_style.dart';
 import 'package:ai_music/controllers/onboarding_controller.dart';
@@ -10,6 +11,7 @@ class OnBoarding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    loadDeviceSize(context);
     return GetBuilder<OnboardingController>(
       init: OnboardingController(),
       builder: (controller) {
@@ -54,7 +56,17 @@ class OnBoarding extends StatelessWidget {
       },
     );
   }
-
+  loadDeviceSize(BuildContext context) {
+    if (MediaQuery.of(context).orientation == Orientation.portrait) {
+      AppSpacing.maxWidth = MediaQuery.of(context).size.width;
+      AppSpacing.maxHeight = MediaQuery.of(context).size.height;
+      AppSpacing.portraitPaddingBottom = MediaQuery.of(context).padding.bottom;
+      AppSpacing.portraitPaddingTop = MediaQuery.of(context).padding.top;
+    } else {
+      AppSpacing.maxWidth = MediaQuery.of(context).size.height;
+      AppSpacing.maxHeight = MediaQuery.of(context).size.width;
+    }
+  }
   Widget _buildTitle(OnboardingController controller) {
     switch (controller.index) {
       case 0:
